@@ -415,8 +415,23 @@ describe('GET /tasks/stats', () => {
   });
 });
 
+describe('GET /health', () => {
+  it('reports ok so the deployed service can be probed', async () => {
+    const res = await request(app).get('/health');
+
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(typeof res.body.uptime).toBe('number');
+  });
+
+  it('does not depend on the task store', async () => {
+    await request(app).get('/health');
+    expect(taskService.getAll()).toEqual([]);
+  });
+});
+
 describe('error handling', () => {
-  it('returns a JSON 500 for malformed request bodies', async () => {
+  it('returns a JSON 500 for malformed request bodies (documents bug #4, see BUG_REPORT.md)', async () => {
     const res = await request(app)
       .post('/tasks')
       .set('Content-Type', 'application/json')

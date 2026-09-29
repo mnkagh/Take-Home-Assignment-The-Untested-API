@@ -1,0 +1,15 @@
+# Render blueprint so the API can be deployed with New -> Blueprint.
+# rootDir matters: package.json lives in task-api/, not at the repo root.
+services:
+  - type: web
+    name: task-api
+    runtime: node
+    plan: free
+    rootDir: task-api
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "18.20.4"

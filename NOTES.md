@@ -1,5 +1,29 @@
 # Submission Notes
 
+## Deploying / running it
+
+```bash
+cd task-api
+npm install
+npm start          # http://localhost:3000
+npm test           # 117 tests
+npm run coverage   # 98.98% statements
+curl http://localhost:3000/health   # {"status":"ok",...} — used as the deploy health check
+```
+
+`render.yaml` at the repo root is a Render blueprint. On render.com: **New → Blueprint** →
+select this repo → apply. Or **New → Web Service** with **Root Directory = `task-api`**,
+build `npm install`, start `npm start`. The root directory matters because
+`package.json` lives in `task-api/`, not at the repo root.
+
+Two things to know about the free tier: the service sleeps after ~15 minutes idle, so the
+first request afterwards takes ~30s, and because the store is in-memory the data resets on
+every cold start. Both are properties of the demo store, not the deployment.
+
+`GET /health` was added for the deployment requirement only — it is not part of the original
+API surface, and it deliberately does not read the task store so a cold start still reports
+healthy.
+
 ## What's here
 
 - **Tests** — 115 tests, 3 suites, in `task-api/tests/`:

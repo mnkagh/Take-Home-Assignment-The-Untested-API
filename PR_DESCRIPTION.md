@@ -1,8 +1,21 @@
 # PR description (paste this into the pull request body)
 
+## Running it
+
+```bash
+cd task-api && npm install && npm start     # http://localhost:3000
+npm test                                     # 117 tests, 117 passing
+npm run coverage                              # 98.98% statements / 97.52% branches
+curl http://localhost:3000/health            # {"status":"ok"} - deploy health check
+```
+
+`render.yaml` at the repo root is a Render blueprint (New -> Blueprint), or set Root Directory
+to `task-api` when creating a Web Service. The source is commented throughout, and each of the
+three fixed bugs has an inline comment at the site explaining what was wrong and pointing here.
+
 ## What I did
 
-Added a 115-test suite (98.97% statement / 97.52% branch coverage, target was 80%): unit
+Added a 117-test suite (98.98% statement / 97.52% branch coverage, target was 80%): unit
 tests for `taskService` and the validators, integration tests for all six endpoints via
 Supertest, and tests for the new endpoint.
 
