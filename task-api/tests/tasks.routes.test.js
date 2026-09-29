@@ -1,4 +1,6 @@
 const request = require('supertest');
+const fs = require('fs');
+const path = require('path');
 const app = require('../src/app');
 const taskService = require('../src/services/taskService');
 
@@ -427,6 +429,33 @@ describe('GET /health', () => {
   it('does not depend on the task store', async () => {
     await request(app).get('/health');
     expect(taskService.getAll()).toEqual([]);
+  });
+});
+
+describe('README accuracy', () => {
+  it('documents the status values the API actually accepts', async () => {
+    const readme = fs.readFileSync(path.join(__dirname, '../../README.md'), 'utf8');
+    const documented = readme.match(/"status": "([^"]+)"/)[1].split(' | ');
+
+    expect(documented).toEqual(['todo', 'in_progress', 'done']);
+
+    for (const status of documented) {
+      const res = await request(app).get(`/tasks?status=${status}`);
+      expect(res.status).toBe(200);
+    }
+  });
+
+  it('documents the assignee fields the API returns', () => {
+    const readme = fs.readFileSync(path.join(__dirname, '../../README.md'), 'utf8');
+
+    expect(readme).toContain('"assignee": "string or null"');
+    expect(readme).toContain('"assignedAt": "ISO 8601 or null"');
+  });
+
+  it('no longer marks the assign endpoint as to-implement', () => {
+    const readme = fs.readFileSync(path.join(__dirname, '../../README.md'), 'utf8');
+
+    expect(readme).not.toContain('_(to implement)_');
   });
 });
 
